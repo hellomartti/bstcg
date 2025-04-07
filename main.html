@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Code Generator</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --shadow-color: rgba(0,0,0,0.1);
+            --input-bg: #ffffff;
+            --result-bg: #f9f9f9;
+            --error-bg: #ffebee;
+            --button-bg: #000000;
+            --button-hover: #333333;
+            --button-text: white;
+            --toggle-bg: #e0e0e0;
+            --toggle-handle: white;
+            --subtitle-color: #666666;
+            transition: all 0.5s ease;
+        }
+
+        :root.dark-theme {
+            --bg-color: #191919;
+            --container-bg: #252525;
+            --text-color: #f5f5f5;
+            --border-color: #444444;
+            --shadow-color: rgba(0,0,0,0.3);
+            --input-bg: #333333;
+            --result-bg: #333333;
+            --error-bg: #5d4037;
+            --button-bg: var(--input-bg);
+            --button-hover: #3a3a3a;
+            --button-text: white;
+            --toggle-bg: #444444;
+            --toggle-handle: #bdbdbd;
+            --subtitle-color: #aaaaaa;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        .container {
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            transition: all 0.5s ease;
+        }
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            transition: color 0.5s ease;
+        }
+        .subtitle {
+            text-align: center;
+            color: var(--subtitle-color);
+            margin-top: -10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            transition: color 0.5s ease;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            transition: color 0.5s ease;
+        }
+        input, button {
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+        button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: var(--button-hover);
+        }
+        .results {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            transition: border-color 0.5s ease;
+        }
+        .result-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: var(--result-bg);
+            border-radius: 4px;
+            transition: background-color 0.5s ease;
+        }
+        .error {
+            color: #d32f2f;
+            padding: 10px;
+            background-color: var(--error-bg);
+            border-radius: 4px;
+            margin-top: 10px;
+            transition: background-color 0.5s ease;
+        }
+        .original-id {
+            font-weight: bold;
+            margin-bottom: 10px;
+            transition: color 0.5s ease;
+        }
+
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .theme-switch-label {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 42px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--toggle-bg);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: var(--toggle-handle);
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--toggle-bg);
+        }
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="theme-switch">
+            <span class="theme-switch-label">Dark Theme</span>
+            <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <h1>Team Code Generator</h1>
+        <div class="subtitle">github.com/hellomartti</div>
+        
+        <div class="input-group">
+            <label for="teamCode">Enter team code or URL (starts with X):</label>
+            <input type="text" id="teamCode" placeholder="e.g. XABCDE or https://link.brawlstars.com/invite/gameroom/en?tag=XABCDE">
+        </div>
+        <div class="input-group">
+            <label for="codeCount">Number of codes to generate:</label>
+            <input type="number" id="codeCount" value="10" min="1" max="100">
+        </div>
+        <button id="generateBtn">Generate Codes</button>
+        
+        <div id="resultsContainer" class="results" style="display: none;">
+            <div id="originalId" class="original-id"></div>
+            <div id="resultsList"></div>
+        </div>
+        <div id="errorContainer" class="error" style="display: none;"></div>
+    </div>
+
+    <script>
+        class LongToCodeConverter {
+            static CONVERSION_CHARS = "0289PYLQGRJCUV";
+            static HASH_TAG = "#";
+            static TEAM_CONVERSION_CHARS = "QWERTYUPASDFGHJKLZCVBNM23456789";
+            static TEAM_TAG = "X";
+
+            constructor(codeSuffix, conversionChars) {
+                this.codeSuffix = codeSuffix || LongToCodeConverter.HASH_TAG;
+                this.conversionChars = conversionChars || LongToCodeConverter.CONVERSION_CHARS;
+            }
+
+            toCode(highInt, lowInt) {
+                highInt = BigInt(highInt);
+                lowInt = BigInt(lowInt);
+                
+                if (highInt < 256n) {
+                    const l = this.toLong(Number(lowInt >> 24n), Number(highInt | (lowInt << 8n)));
+                    const res = this.convert(l);
+                    return this.codeSuffix + res;
+                } else {
+                    console.error("Cannot convert the code to string. Higher int value too large");
+                    return null;
+                }
+            }
+
+            convert(id) {
+                let tag = [];
+                const len = this.conversionChars.length;
+                id = BigInt(id);
+                while (id > 0n) {
+                    const charIndex = Number(id % BigInt(len));
+                    tag.unshift(this.conversionChars.charAt(charIndex));
+                    id -= BigInt(charIndex);
+                    id /= BigInt(len);
+                }
+                return tag.join('');
+            }
+
+            toId(code) {
+                let codeSubstring, subStr;
+                let i, counter, subStrIdx;
+                let unk6 = 0n, unk12 = 0n;
+                let unk7 = 0n, v13;
+                let hiInt, loInt;
+
+                if (code.length < 14) {
+                    codeSubstring = code.substring(1);
+
+                    if (codeSubstring.length < 1) {
+                        v13 = 0n;
+                        loInt = Number(v13 & 0x7FFFFFFFn);
+                        hiInt = 0;
+                    } else {
+                        i = 0;
+                        unk6 = 0n;
+                        unk7 = 0n;
+
+                        do {
+                            counter = i + 1;
+                            subStr = codeSubstring.substring(i, counter);
+                            subStrIdx = this.conversionChars.indexOf(subStr);
+                            if (subStrIdx <= -1) {
+                                console.error("Cannot convert the string to code. String contains invalid character(s).");
+                                return this.toLong(-1, -1);
+                            }
+
+                            unk12 = unk6 * BigInt(this.conversionChars.length) + BigInt(subStrIdx);
+                            unk7 = (this.toLongS(Number(unk7), Number(unk6)) * BigInt(this.conversionChars.length) + BigInt(subStrIdx)) >> 32n;
+                            unk6 = unk12;
+                            i = counter;
+                        } while (counter < codeSubstring.length);
+
+                        if ((unk12 & unk7) !== -1n) {
+                            v13 = this.toLongS(Number(unk7), Number(unk12)) >> 8n;
+                            loInt = Number(v13 & 0x7FFFFFFFn);
+                            hiInt = Number(unk6 & 0xFFn);
+                            return this.toLong(hiInt, loInt);
+                        }
+
+                        hiInt = -1;
+                        loInt = -1;
+                    }
+
+                    return this.toLong(hiInt, loInt);
+                } else {
+                    console.error("Cannot convert the string to code. String is too long.");
+                    return this.toLong(-1, -1);
+                }
+            }
+
+            toLong(hiInt, loInt) {
+                return (BigInt(hiInt) << 32n) | (BigInt(loInt) & 0xFFFFFFFFn);
+            }
+            
+            toLongS(hiInt, loInt) {
+                return (BigInt(hiInt) << 32n) | BigInt(loInt);
+            }
+        }
+
+        function extractTeamCode(input) {
+            if (input.includes('brawlstars.com')) {
+                const match = input.match(/tag=([A-Z0-9]+)/i);
+                if (match && match[1]) {
+                    return 'X' + match[1].replace(/^X/, '');
+                }
+            }
+            return input;
+        }
+
+        function generateNextCodes(converter, baseCode, count) {
+            const baseId = converter.toId(baseCode);
+            
+            if (baseId === (converter.toLong(-1, -1))) {
+                showError("Error: Invalid team code");
+                return;
+            }
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            const originalId = document.getElementById('originalId');
+            const resultsList = document.getElementById('resultsList');
+            
+            resultsContainer.style.display = 'block';
+            originalId.textContent = `Original ID: ${baseId.toString()}`;
+            resultsList.innerHTML = '';
+            
+            for (let i = 1; i <= count; i++) {
+                const nextId = baseId + BigInt(i);
+                
+                const highInt = Number(nextId >> 32n);
+                const lowInt = Number(nextId & 0xFFFFFFFFn);
+                
+                const nextCode = converter.toCode(highInt, lowInt);
+                
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.textContent = `${i}: ${nextCode} (ID: ${nextId.toString()})`;
+                resultsList.appendChild(resultItem);
+            }
+        }
+
+        function showError(message) {
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.textContent = message;
+            errorContainer.style.display = 'block';
+            document.getElementById('resultsContainer').style.display = 'none';
+        }
+
+        function updateTheme() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            document.getElementById('themeToggle').checked = darkMode;
+            
+            if (darkMode) {
+                document.documentElement.classList.add('dark-theme');
+            } else {
+                document.documentElement.classList.remove('dark-theme');
+            }
+        }
+
+        document.getElementById('themeToggle').addEventListener('change', function() {
+            localStorage.setItem('darkMode', this.checked);
+            updateTheme();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('darkMode') === null) {
+                localStorage.setItem('darkMode', 'false');
+            }
+            updateTheme();
+            
+            document.getElementById('generateBtn').addEventListener('click', function() {
+                const input = document.getElementById('teamCode').value.trim();
+                const codeCount = parseInt(document.getElementById('codeCount').value);
+                
+                document.getElementById('errorContainer').style.display = 'none';
+                
+                let teamCode;
+                try {
+                    teamCode = extractTeamCode(input);
+                } catch (e) {
+                    showError("Error: Could not extract team code from input");
+                    return;
+                }
+                
+                if (!teamCode.startsWith('X')) {
+                    showError("Error: Team code must start with X");
+                    return;
+                }
+                
+                const teamConverter = new LongToCodeConverter(
+                    LongToCodeConverter.TEAM_TAG,
+                    LongToCodeConverter.TEAM_CONVERSION_CHARS
+                );
+                
+                generateNextCodes(teamConverter, teamCode, codeCount);
+            });
+        });
+    </script>
+</body>
+</html>
