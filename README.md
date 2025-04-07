@@ -10,4 +10,4 @@ I didn’t know how brawl stars generates codes, so I found a person on Github w
 it's pretty easy. you take the link or code of the above command and paste it into the site, write how many codes you need to generate - and that’s it. You can visit them, with a high chance you will visit a random player :)!
 
 ## /how open site?
-oh... just press on this - hellomartti.github.io/bstcg/
+oh... just press on this - [hellomartti.github.io/bstcg/](https://hellomartti.github.io/bstcg/)
