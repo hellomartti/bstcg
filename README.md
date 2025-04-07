@@ -12,5 +12,4 @@ it's pretty easy. you take the link or code of the above command and paste it in
 ## /how open site?
 oh... just press on this - [hellomartti.github.io/bstcg/](https://hellomartti.github.io/bstcg/)
 
-## preview
 <p align="center"><img src="https://raw.githubusercontent.com/hellomartti/bstcg/refs/heads/main/preview.gif" alt="github.com/hellomartti/bstcg"></p>
